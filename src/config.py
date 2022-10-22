@@ -12,8 +12,6 @@ class Config:
     EPOCHS = 10
 
 
-TARGET = "SalePrice"
-
 CAT_COLS = ['MSZoning', 'Street', 'Alley', 'LotShape', 'LandContour', 'Utilities',
     'LotConfig', 'LandSlope', 'Neighborhood', 'Condition1', 'Condition2', 'BldgType',
     'HouseStyle', 'RoofStyle', 'RoofMatl', 'Exterior1st', 'Exterior2nd', 'MasVnrType',
@@ -32,3 +30,5 @@ NUM_CALS = ['Id', 'MSSubClass', 'LotFrontage', 'LotArea', 'OverallQual', 'Overal
     'YrSold']
  
 FEATURES = CAT_COLS + NUM_CALS
+
+TARGET = 'SalePrice'

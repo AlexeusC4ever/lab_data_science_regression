@@ -1,0 +1,46 @@
+schema: '2.0'
+stages:
+  preprocess_data:
+    cmd: python src/data/make_dataset.py data/raw/train.csv data/raw/test.csv data/interim/train.pkl
+      data/interim/test.pkl
+    deps:
+    - path: data/raw
+      md5: f1bee252fc1163f4595334fedeb31899.dir
+      size: 962294
+      nfiles: 4
+    outs:
+    - path: data/interim
+      md5: c9a4f557c4b065d2a0252b01d9f02e83.dir
+      size: 3668805
+      nfiles: 17
+  tain_val_split:
+    cmd: train_test_split -d data/interim --outs-persist data/interim python src/data/train_val_split.py
+      data/interim/train.pkl data/interim/train_X.pkl data/interim/train_Y.pkl data/interim/val_X.pkl
+      data/interim/val_Y.pkl
+  build_features:
+    cmd: python src/features/build_features.py data/interim/train_X.pkl data/interim/train_Y.pkl
+      data/interim/val_X.pkl data/interim/val_Y.pkl data/processed/x_train_label_encoded.pkl
+      data/processed/x_val_label_encoded.pkl data/processed/x_train_target_encoded.pkl
+      data/processed/x_val_target_encoded.pkl
+    deps:
+    - path: data/interim
+      md5: c9a4f557c4b065d2a0252b01d9f02e83.dir
+      size: 3668805
+      nfiles: 17
+    outs:
+    - path: data/processed
+      md5: 7a1725c20467a9504c7cd8716eb6aa0d.dir
+      size: 7531442
+      nfiles: 35
+  train_val_split:
+    cmd: python src/data/train_val_split.py data/interim/train.pkl data/interim/train_X.pkl
+      data/interim/train_Y.pkl data/interim/val_X.pkl data/interim/val_Y.pkl
+  train_models:
+    cmd: data/processed --outs-persist models/ python src/models/train_model.py data/interim/train_X.pkl
+      data/interim/train_Y.pkl data/processed/x_train_label_encoded.pkl data/processed/x_train_target_encoded.pkl
+      models/cat_boost_regressor.pkl models/RFR_label_encode.pkl models/RFR_target_encode.pkl
+    deps:
+    - path: data/interim
+      md5: c9a4f557c4b065d2a0252b01d9f02e83.dir
+      size: 3668805
+      nfiles: 17

@@ -1,9 +1,28 @@
 stages:
   preprocess_data:
-    cmd: python src/data/make_dataset.py data/raw/train.csv data/raw/test.csv data/processed/train.pkl
-      data/processed/test.pkl
+    cmd: python src/data/make_dataset.py data/raw/train.csv data/raw/test.csv data/interim/train.pkl
+      data/interim/test.pkl
     deps:
     - data/raw
     outs:
+    - data/interim:
+        persist: true
+  train_val_split:
+    cmd: python src/data/train_val_split.py data/interim/train.pkl data/interim/train_X.pkl
+      data/interim/train_Y.pkl data/interim/val_X.pkl data/interim/val_Y.pkl
+  build_features:
+    cmd: python src/features/build_features.py data/interim/train_X.pkl data/interim/train_Y.pkl
+      data/interim/val_X.pkl data/interim/val_Y.pkl data/processed/x_train_label_encoded.pkl
+      data/processed/x_val_label_encoded.pkl data/processed/x_train_target_encoded.pkl
+      data/processed/x_val_target_encoded.pkl
+    deps:
+    - data/interim
+    outs:
     - data/processed:
         persist: true
+  train_models:
+    cmd: data/processed --outs-persist models/ python src/models/train_model.py data/interim/train_X.pkl
+      data/interim/train_Y.pkl data/processed/x_train_label_encoded.pkl data/processed/x_train_target_encoded.pkl
+      models/cat_boost_regressor.pkl models/RFR_label_encode.pkl models/RFR_target_encode.pkl
+    deps:
+    - data/interim

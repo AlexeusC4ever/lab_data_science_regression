@@ -1,0 +1,8 @@
+[core]
+    remote = created_models
+['remote "data_interim_remote"']
+    url = ../data/interim
+['remote "data_processed_remote"']
+    url = ../data/processed
+['remote "created_models"']
+    url = ../models
