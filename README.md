@@ -2,7 +2,7 @@
  Для задачи была выбрана простейшая MSE, так как в данных довольно много категориальных признаков и не так много выбросов. 
 
 Лучшая модель выбирается по MSE на train этапе.
-Подсчет MAE и R2 осуществляется на валидационной выборке, уже на обученной модели, результаты сохраняются в директории reports/figures.
+Подсчет MAE и R2 осуществляется на валидационной выборке, уже на обученной модели, результаты сохраняются в директории reports, графики - в reports/figures.
 
 2)  Разделение данных train/val<br />
 Происходит в стейдже preprocess_data, с помощью функции train_test_split из sklearn, выход - в data/interim вместе с неразделенными train и test данными.
@@ -11,10 +11,12 @@
 Происходит в стейдже feature_generating. Заполняются пустые ячейки c помощью SimpleImputer по самому встречаемому для категориальных столбцов и по медиане для числовых столбцов, а также делается target encoding с помощью класса TargetEncoder, и label encoding с помощью label encoder из sklearn выход - в data/processed.
  
 4)  Обучение модели<br />
-  1.Происходит в стейдже train_models. В ходе треникровки с помощью gridSearchCV выбирается лучшие параметры для catboost модели и для RandomForestRegressor. Модели     сохраняются в папку models.
-  2.Также в стейдже creating_pipelines создаются два sklearn pipeline для обеих моделей. В пайплайне для catboost - заполнение пустых полей, в пайплайне для RandomForestClassifier - заполнение пустых полей и target encoding. Fit для обоих пайплайнов происходит в create_pipelines.py.
+  1.Происходит в стейдже train_models. В ходе треникровки с помощью gridSearchCV выбирается лучшие параметры для catboost модели и для RandomForestRegressor. Модели     сохраняются в папку models. Для RandomForestRegressor моделей создаются два пайплайна - один с label_encoder'ом, второй - с target_encoder'ом.
   
 5)  Оценка модели по метрике качества, выбранном в первом пункте на val датасете и сохранение метрик / графиков.<br />
-  Происходит в стейдже val_predict_count_metrics. Сохраняет метрики в reports/evaluation.json, графики - в reports/figures
+  Происходит в стейдже val_predict_count_metrics. Сохраняет метрики в reports/report.json, графики - в reports/figures
 
 6) Predict осуществляется с помощью наилучшей модели по результатам метрик в стейдже val_predict_count_metrics, результаты сбрасываются в папку data/external
+
+В пайплайнах используется работа с категориальными признаками (label_encoding, target_encoding, также попробовал покрутить параметры для catboost'а в gridSearchCV).
+Для управления данными и экспериментами использован DVC
