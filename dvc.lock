@@ -51,9 +51,9 @@ stages:
       nfiles: 35
     outs:
     - path: models/
-      md5: 8eb1fa205638cd7649844c457508cacf.dir
-      size: 14835969
-      nfiles: 39
+      md5: f50caf6aed6ef28fdb6592e3dacda321.dir
+      size: 17709255
+      nfiles: 53
   val_predict_count_metrics:
     cmd: python ./src/models/predict_model.py data/interim/val_X.pkl data/interim/val_Y.pkl
       data/processed/x_val_label_encoded.pkl data/processed/x_val_target_encoded.pkl
@@ -69,11 +69,28 @@ stages:
       size: 7531442
       nfiles: 35
     - path: models/
-      md5: 8eb1fa205638cd7649844c457508cacf.dir
-      size: 14835969
-      nfiles: 39
+      md5: f50caf6aed6ef28fdb6592e3dacda321.dir
+      size: 17709255
+      nfiles: 53
     outs:
     - path: best_model/
       md5: 038a850a1e1a664b7bca4c9092b72941.dir
       size: 586026
       nfiles: 1
+  model_evaluate:
+    cmd: python src/evaluate.py data/interim/test.pkl ./data/external/predictions.csv
+      best_model/best_model.pkl
+    deps:
+    - path: best_model/
+      md5: 038a850a1e1a664b7bca4c9092b72941.dir
+      size: 586026
+      nfiles: 1
+    - path: data/interim
+      md5: d7e677ad45d4fd60eb8c8b0362135dbe.dir
+      size: 3668706
+      nfiles: 17
+    outs:
+    - path: data/external
+      md5: c175759150ca0d4794eeb700c48b2c66.dir
+      size: 35895
+      nfiles: 2

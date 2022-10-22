@@ -41,3 +41,12 @@ stages:
     outs:
     - best_model/:
         persist: true
+  model_evaluate:
+    cmd: python src/evaluate.py data/interim/test.pkl ./data/external/predictions.csv
+      best_model/best_model.pkl
+    deps:
+    - best_model/
+    - data/interim
+    outs:
+    - data/external:
+        persist: true
