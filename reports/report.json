@@ -1,0 +1,11 @@
+{
+    "catboost_modelr2": 0.9147865525465783,
+    "catboost_modelMSE": 597765869.0630646,
+    "catboost_modelMAE": 15646.71183091032,
+    "RFR_model_labelr2": 0.8851306302323497,
+    "RFR_model_labelMSE": 805799914.2144637,
+    "RFR_model_labelMAE": 18772.008337806845,
+    "RFR_model_targetr2": 0.863090926131201,
+    "RFR_model_targetMSE": 960406766.4148438,
+    "RFR_model_targetMAE": 20730.758131457515
+}

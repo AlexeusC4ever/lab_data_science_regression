@@ -14,6 +14,9 @@ from sklearn.metrics import mean_absolute_error as MAE
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 import src.utils as utils
+from dvclive import Live
+
+live = Live("reports/report")
 
 
 @click.command()
@@ -79,6 +82,10 @@ def main(input_filepath_val_x, input_filepath_val_y,
                       MAE(y_val, preds_RFR_label),
                       MAE(y_val, preds_RFR_target)]
 
+    for m in range(len(models)):
+        live.log(model_names[m] + "r2", results['R2'][m])
+        live.log(model_names[m] + "MSE", results['MSE'][m])
+        live.log(model_names[m] + "MAE", results['MAE'][m])
     
 
     data = pd.DataFrame(data= np.c_[results['R2'], results['MSE'], results['MAE']],
