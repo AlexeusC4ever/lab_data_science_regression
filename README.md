@@ -1,57 +1,20 @@
-lab_data_science_regression
-==============================
+1)  Выбор метрики и обоснование ее выбора:<br />
+ Для задачи была выбрана простейшая MSE, так как в данных довольно много категориальных признаков и не так много выбросов. 
 
-A short description of the project.
+Лучшая модель выбирается по MSE на train этапе.
+Подсчет MAE и R2 осуществляется на валидационной выборке, уже на обученной модели, результаты сохраняются в директории reports/figures.
 
-Project Organization
-------------
+2)  Разделение данных train/val<br />
+Происходит в стейдже preprocess_data, с помощью функции train_test_split из sklearn, выход - в data/interim вместе с неразделенными train и test данными.
 
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+3)  Генерация признаков<br />
+Происходит в стейдже feature_generating. Заполняются пустые ячейки c помощью SimpleImputer по самому встречаемому для категориальных столбцов и по медиане для числовых столбцов, а также делается target encoding с помощью класса TargetEncoder, и label encoding с помощью label encoder из sklearn выход - в data/processed.
+ 
+4)  Обучение модели<br />
+  1.Происходит в стейдже train_models. В ходе треникровки с помощью gridSearchCV выбирается лучшие параметры для catboost модели и для RandomForestRegressor. Модели     сохраняются в папку models.
+  2.Также в стейдже creating_pipelines создаются два sklearn pipeline для обеих моделей. В пайплайне для catboost - заполнение пустых полей, в пайплайне для RandomForestClassifier - заполнение пустых полей и target encoding. Fit для обоих пайплайнов происходит в create_pipelines.py.
+  
+5)  Оценка модели по метрике качества, выбранном в первом пункте на val датасете и сохранение метрик / графиков.<br />
+  Происходит в стейдже val_predict_count_metrics. Сохраняет метрики в reports/evaluation.json, графики - в reports/figures
 
-
---------
-
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+6) Predict осуществляется с помощью наилучшей модели по результатам метрик в стейдже val_predict_count_metrics, результаты сбрасываются в папку data/external
