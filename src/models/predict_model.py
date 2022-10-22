@@ -53,8 +53,8 @@ def main(input_filepath_val_x, input_filepath_val_y,
     scores = []
 
     preds_catboost = catboost_model.predict(x_val)
-    preds_RFR_label = RFR_model_label.predict(x_val_label)
-    preds_RFR_target = RFR_model_target.predict(x_val_target)
+    preds_RFR_label = RFR_model_label.predict(x_val)
+    preds_RFR_target = RFR_model_target.predict(x_val)
 
     scores.append(MAE(y_val, preds_catboost))
     scores.append(MAE(y_val, preds_RFR_label))

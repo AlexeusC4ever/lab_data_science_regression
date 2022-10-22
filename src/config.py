@@ -32,3 +32,6 @@ NUM_CALS = ['Id', 'MSSubClass', 'LotFrontage', 'LotArea', 'OverallQual', 'Overal
 FEATURES = CAT_COLS + NUM_CALS
 
 TARGET = 'SalePrice'
+
+# label_pipeline_path = 'models/label_pipeline.pkl'
+# target_pipeline_path = 'models/target_pipeline.pkl'

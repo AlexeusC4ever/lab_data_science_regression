@@ -68,3 +68,22 @@ class TargetEncoder:
         self.fit(x, y)
         return self.transform(x, y)
         
+
+class LabelEncoder:
+    def __init__(self, columns):
+        self.columns = columns
+        
+        
+    def fit(self, x, y=None):
+        train_copy = x.copy()
+        for col in self.columns:
+            train_copy[col] = train_copy[col].astype(str)
+            train_copy[col] = preprocessing.LabelEncoder().fit_transform(train_copy[col])
+        return train_copy
+
+        
+    def transform(self, x, y=None):
+        return self.fit(x)
+            
+    def fit_transform(self, x, y=None):
+        return self.fit(x)

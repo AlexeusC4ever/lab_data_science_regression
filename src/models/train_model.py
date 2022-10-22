@@ -10,6 +10,8 @@ from dotenv import find_dotenv, load_dotenv
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error as MSE
+import category_encoders as ce
+from sklearn.pipeline import Pipeline
 from  catboost import CatBoostRegressor
 import src.config as cfg
 import src.utils as utils
@@ -49,7 +51,7 @@ def main(input_filepath_train_x, input_filepath_train_y,
     }
     
 
-    grid_catboost = GridSearchCV(CatBoostRegressor(cat_features=cfg.CAT_COLS, verbose=500), param_grid, cv=3, scoring=MSE, 
+    grid_catboost = GridSearchCV(CatBoostRegressor(cat_features=cfg.CAT_COLS, verbose=500), param_grid, cv=3, scoring='neg_mean_squared_error', 
                         verbose=0)
 
     grid_catboost.fit(x_train, y_train)
@@ -59,29 +61,41 @@ def main(input_filepath_train_x, input_filepath_train_y,
 
     best_score = 0
     best_model = None
+
+    te_label = utils.LabelEncoder(cfg.CAT_COLS)
     
     param_grid = {
         'max_depth': [5, 10, 20],
         'n_estimators' : [500, 1000],
     }
 
-    grid_RFR_label = GridSearchCV(RandomForestRegressor(), param_grid, cv=3, scoring=MSE, 
+    grid_RFR_label = GridSearchCV(RandomForestRegressor(), param_grid, cv=3, scoring='neg_mean_squared_error', 
                         verbose=0)
 
     # print(x_train.shape)
     # print(x_train_label.shape)
     # print(y_train.shape)
 
-    grid_RFR_label.fit(x_train_label, y_train)
+    # grid_RFR_label.fit(x_train_label, y_train)
     
-    grid_RFR_target = GridSearchCV(RandomForestRegressor(), param_grid, cv=3, scoring=MSE, 
+    grid_RFR_target = GridSearchCV(RandomForestRegressor(), param_grid, cv=3, scoring='neg_mean_squared_error', 
                         verbose=0)
 
-    grid_RFR_target.fit(x_train_target, y_train)
+    # grid_RFR_target.fit(x_train_target, y_train)
+                    
+
+    RFR_pipeline_target = Pipeline([('target_encoder', ce.TargetEncoder(drop_invariant=False)),
+                                    ('model', grid_RFR_label)])
+
+    RFR_pipeline_label = Pipeline([('label_encoder', te_label),
+                                    ('model', grid_RFR_label)])
+
+    RFR_pipeline_target.fit(x_train, y_train)
+    RFR_pipeline_label.fit(x_train, y_train)
 
     utils.save_model_as_pickle(grid_catboost, catboost_model_path)
-    utils.save_model_as_pickle(grid_RFR_label, rfr_label_model_path)
-    utils.save_model_as_pickle(grid_RFR_target, rfr_target_model_path)
+    utils.save_model_as_pickle(RFR_pipeline_label, rfr_label_model_path)
+    utils.save_model_as_pickle(RFR_pipeline_target, rfr_target_model_path)
 
 
 if __name__ == '__main__':
