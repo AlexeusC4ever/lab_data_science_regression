@@ -6,3 +6,5 @@
     url = ../data/processed
 ['remote "created_models"']
     url = ../models
+['remote "best_model_dir"']
+    url = ../best_model

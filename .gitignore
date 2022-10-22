@@ -88,3 +88,5 @@ target/
 # Mypy cache
 .mypy_cache/
 /models
+/model_for_predict
+/best_model

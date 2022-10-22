@@ -9,7 +9,7 @@ from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import mean_absolute_error as MAE
+from sklearn.metrics import mean_squared_error as MSE
 from  catboost import CatBoostRegressor
 import src.config as cfg
 import src.utils as utils
@@ -49,7 +49,7 @@ def main(input_filepath_train_x, input_filepath_train_y,
     }
     
 
-    grid_catboost = GridSearchCV(CatBoostRegressor(cat_features=cfg.CAT_COLS, verbose=500), param_grid, cv=3, scoring=MAE, 
+    grid_catboost = GridSearchCV(CatBoostRegressor(cat_features=cfg.CAT_COLS, verbose=500), param_grid, cv=3, scoring=MSE, 
                         verbose=0)
 
     grid_catboost.fit(x_train, y_train)
@@ -65,7 +65,7 @@ def main(input_filepath_train_x, input_filepath_train_y,
         'n_estimators' : [500, 1000],
     }
 
-    grid_RFR_label = GridSearchCV(RandomForestRegressor(), param_grid, cv=3, scoring=MAE, 
+    grid_RFR_label = GridSearchCV(RandomForestRegressor(), param_grid, cv=3, scoring=MSE, 
                         verbose=0)
 
     # print(x_train.shape)
@@ -74,7 +74,7 @@ def main(input_filepath_train_x, input_filepath_train_y,
 
     grid_RFR_label.fit(x_train_label, y_train)
     
-    grid_RFR_target = GridSearchCV(RandomForestRegressor(), param_grid, cv=3, scoring=MAE, 
+    grid_RFR_target = GridSearchCV(RandomForestRegressor(), param_grid, cv=3, scoring=MSE, 
                         verbose=0)
 
     grid_RFR_target.fit(x_train_target, y_train)

@@ -29,3 +29,15 @@ stages:
     outs:
     - models/:
         persist: true
+  val_predict_count_metrics:
+    cmd: python ./src/models/predict_model.py data/interim/val_X.pkl data/interim/val_Y.pkl
+      data/processed/x_val_label_encoded.pkl data/processed/x_val_target_encoded.pkl
+      models/cat_boost_regressor.pkl models/RFR_label_encode.pkl models/RFR_target_encode.pkl
+      best_model/best_model.pkl
+    deps:
+    - data/interim
+    - data/processed
+    - models/
+    outs:
+    - best_model/:
+        persist: true
